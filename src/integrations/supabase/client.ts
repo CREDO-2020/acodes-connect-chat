@@ -3,23 +3,23 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 import { brokeredPreviewStorage } from './previewAuthStorage';
 
+// Supabase publishable keys are safe to use in browser applications.
+// Keep the Vite variables as the first choice, with the active project values
+// as a fallback so a stale/misconfigured Vercel environment cannot break auth.
+const DEFAULT_SUPABASE_URL = 'https://vudmpeluukvraqozkwxr.supabase.co';
+const DEFAULT_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_U19_dtCpAZ3tJTooca7M-Q_nNSYL1bl';
+
 function createSupabaseClient() {
-  // Vite exposes VITE_* variables to the browser at build time.
-  // The server fallback keeps SSR working.
-  const SUPABASE_URL = import.meta.env['VITE_SUPABASE_URL'] || process.env['SUPABASE_URL'];
+  const SUPABASE_URL =
+    import.meta.env['VITE_SUPABASE_URL'] ||
+    process.env['SUPABASE_URL'] ||
+    DEFAULT_SUPABASE_URL;
+
   const SUPABASE_PUBLISHABLE_KEY =
-    import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'] || process.env['SUPABASE_PUBLISHABLE_KEY'];
+    import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'] ||
+    process.env['SUPABASE_PUBLISHABLE_KEY'] ||
+    DEFAULT_SUPABASE_PUBLISHABLE_KEY;
 
-  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-    const missing = [
-      ...(!SUPABASE_URL ? ['VITE_SUPABASE_URL'] : []),
-      ...(!SUPABASE_PUBLISHABLE_KEY ? ['VITE_SUPABASE_PUBLISHABLE_KEY'] : []),
-    ];
-    throw new Error(`Missing Supabase environment variable(s): ${missing.join(', ')}`);
-  }
-
-  // Let @supabase/supabase-js manage the required apikey and Authorization
-  // headers. This is especially important for Supabase's new sb_publishable_ keys.
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
     auth: {
       storage: brokeredPreviewStorage(),
