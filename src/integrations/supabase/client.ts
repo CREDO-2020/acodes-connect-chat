@@ -3,24 +3,29 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 import { brokeredPreviewStorage } from './previewAuthStorage';
 
-// Supabase publishable keys are safe to use in browser applications.
-// Keep the Vite variables as the first choice, with the active project values
-// as a fallback so a stale/misconfigured Vercel environment cannot break auth.
 const DEFAULT_SUPABASE_URL = 'https://vudmpeluukvraqozkwxr.supabase.co';
-const DEFAULT_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_U19_dtCpAZ3tJTooca7M-Q_nNSYL1bl';
 
+// Legacy anon keys are still supported for browser clients and are more
+// compatible with older Supabase auth gateways/proxies than sb_publishable_.
+// VITE_SUPABASE_ANON_KEY should be set in Vercel. The publishable key remains
+// a fallback for environments that have not been updated yet.
 function createSupabaseClient() {
   const SUPABASE_URL =
     import.meta.env['VITE_SUPABASE_URL'] ||
     process.env['SUPABASE_URL'] ||
     DEFAULT_SUPABASE_URL;
 
-  const SUPABASE_PUBLISHABLE_KEY =
+  const SUPABASE_KEY =
+    import.meta.env['VITE_SUPABASE_ANON_KEY'] ||
+    process.env['SUPABASE_ANON_KEY'] ||
     import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'] ||
-    process.env['SUPABASE_PUBLISHABLE_KEY'] ||
-    DEFAULT_SUPABASE_PUBLISHABLE_KEY;
+    process.env['SUPABASE_PUBLISHABLE_KEY'];
 
-  return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  if (!SUPABASE_KEY) {
+    throw new Error('Missing Supabase API key. Add VITE_SUPABASE_ANON_KEY in Vercel.');
+  }
+
+  return createClient<Database>(SUPABASE_URL, SUPABASE_KEY, {
     auth: {
       storage: brokeredPreviewStorage(),
       persistSession: true,
