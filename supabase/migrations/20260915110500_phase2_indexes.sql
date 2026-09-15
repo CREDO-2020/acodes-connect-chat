@@ -1,0 +1,9 @@
+create index if not exists attachments_uploader_idx on public.attachments(uploader_id);
+create index if not exists conversations_created_by_idx on public.conversations(created_by);
+create index if not exists reactions_user_idx on public.message_reactions(user_id);
+create index if not exists messages_reply_to_idx on public.messages(reply_to_id);
+create index if not exists messages_sender_idx on public.messages(sender_id);
+create index if not exists notifications_actor_idx on public.notifications(actor_id);
+create index if not exists notifications_conversation_idx on public.notifications(conversation_id);
+create index if not exists notifications_message_idx on public.notifications(message_id);
+create index if not exists typing_status_user_idx on public.typing_status(user_id);
