@@ -1,16 +1,377 @@
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
-export type Database = { public: { Tables: {
-  profiles: { Row: { id:string; full_name:string; username:string|null; avatar_url:string|null; class_name:string|null; bio:string|null; phone:string|null; email:string|null; status:string; is_online:boolean; last_seen:string|null; created_at:string; updated_at:string }; Insert: Partial<Database['public']['Tables']['profiles']['Row']> & {id:string}; Update: Partial<Database['public']['Tables']['profiles']['Row']>; Relationships:[] };
-  user_roles: { Row:{id:string;user_id:string;role:string}; Insert:{id?:string;user_id:string;role:string}; Update:Partial<Database['public']['Tables']['user_roles']['Row']>; Relationships:[] };
-  conversations: { Row:{id:string;kind:string;title:string|null;created_by:string|null;created_at:string}; Insert:{id?:string;kind?:string;title?:string|null;created_by?:string|null;created_at?:string}; Update:Partial<Database['public']['Tables']['conversations']['Row']>; Relationships:[] };
-  conversation_members: { Row:{conversation_id:string;user_id:string;joined_at:string;last_read_at:string|null}; Insert:{conversation_id:string;user_id:string;joined_at?:string;last_read_at?:string|null}; Update:Partial<Database['public']['Tables']['conversation_members']['Row']>; Relationships:[] };
-  messages: { Row:{id:string;conversation_id:string;sender_id:string;body:string;created_at:string;edited_at:string|null;deleted_at:string|null;reply_to_id:string|null}; Insert:{id?:string;conversation_id:string;sender_id:string;body:string;created_at?:string;edited_at?:string|null;deleted_at?:string|null;reply_to_id?:string|null}; Update:Partial<Database['public']['Tables']['messages']['Row']>; Relationships:[] };
-  message_receipts: { Row:{message_id:string;user_id:string;read_at:string}; Insert:{message_id:string;user_id:string;read_at?:string}; Update:Partial<Database['public']['Tables']['message_receipts']['Row']>; Relationships:[] };
-  typing_status: { Row:{conversation_id:string;user_id:string;is_typing:boolean;updated_at:string}; Insert:{conversation_id:string;user_id:string;is_typing?:boolean;updated_at?:string}; Update:Partial<Database['public']['Tables']['typing_status']['Row']>; Relationships:[] };
-  attachments: { Row:{id:string;message_id:string;uploader_id:string;storage_path:string;file_name:string;mime_type:string;file_size:number;created_at:string}; Insert:{id?:string;message_id:string;uploader_id:string;storage_path:string;file_name:string;mime_type:string;file_size:number;created_at?:string}; Update:Partial<Database['public']['Tables']['attachments']['Row']>; Relationships:[] };
-  message_reactions: { Row:{id:string;message_id:string;user_id:string;reaction:string;created_at:string}; Insert:{id?:string;message_id:string;user_id:string;reaction:string;created_at?:string}; Update:Partial<Database['public']['Tables']['message_reactions']['Row']>; Relationships:[] };
-  notifications: { Row:{id:string;user_id:string;actor_id:string|null;conversation_id:string|null;message_id:string|null;type:string;title:string;body:string|null;read_at:string|null;created_at:string}; Insert:{id?:string;user_id:string;actor_id?:string|null;conversation_id?:string|null;message_id?:string|null;type:string;title:string;body?:string|null;read_at?:string|null;created_at?:string}; Update:Partial<Database['public']['Tables']['notifications']['Row']>; Relationships:[] };
-}; Views:Record<string,never>; Functions:{ get_or_create_direct_conversation:{Args:{other_user:string};Returns:string}; create_group:{Args:{group_title:string;member_ids:string[]};Returns:string}; manage_group_member:{Args:{conversation_id_input:string;target_user:string;action:string};Returns:boolean}; leave_group:{Args:{conversation_id_input:string};Returns:boolean}; has_role:{Args:{_user_id:string;_role:string};Returns:boolean} }; Enums:Record<string,never>; CompositeTypes:Record<string,never> } };
-export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
-export type TablesInsert<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Insert'];
-export type TablesUpdate<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Update'];
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
+  }
+  public: {
+    Tables: {
+      conversation_members: {
+        Row: {
+          conversation_id: string
+          id: string
+          joined_at: string
+          last_read_at: string
+          muted: boolean
+          role: Database["public"]["Enums"]["member_role"]
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          id?: string
+          joined_at?: string
+          last_read_at?: string
+          muted?: boolean
+          role?: Database["public"]["Enums"]["member_role"]
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          id?: string
+          joined_at?: string
+          last_read_at?: string
+          muted?: boolean
+          role?: Database["public"]["Enums"]["member_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_members_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          last_message_at: string
+          name: string | null
+          type: Database["public"]["Enums"]["conversation_type"]
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          last_message_at?: string
+          name?: string | null
+          type?: Database["public"]["Enums"]["conversation_type"]
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          last_message_at?: string
+          name?: string | null
+          type?: Database["public"]["Enums"]["conversation_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          body: string | null
+          conversation_id: string
+          created_at: string
+          deleted_at: string | null
+          edited_at: string | null
+          id: string
+          kind: string
+          pinned: boolean
+          reply_to_id: string | null
+          sender_id: string
+        }
+        Insert: {
+          body?: string | null
+          conversation_id: string
+          created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
+          id?: string
+          kind?: string
+          pinned?: boolean
+          reply_to_id?: string | null
+          sender_id: string
+        }
+        Update: {
+          body?: string | null
+          conversation_id?: string
+          created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
+          id?: string
+          kind?: string
+          pinned?: boolean
+          reply_to_id?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_reply_to_id_fkey"
+            columns: ["reply_to_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          class_name: string | null
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          is_online: boolean
+          last_seen: string
+          phone: string | null
+          status: Database["public"]["Enums"]["account_status"]
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          class_name?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id: string
+          is_online?: boolean
+          last_seen?: string
+          phone?: string | null
+          status?: Database["public"]["Enums"]["account_status"]
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          class_name?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_online?: boolean
+          last_seen?: string
+          phone?: string | null
+          status?: Database["public"]["Enums"]["account_status"]
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      get_or_create_direct_conversation: {
+        Args: { _other_user: string }
+        Returns: string
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_conversation_admin: {
+        Args: { _conversation_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_conversation_member: {
+        Args: { _conversation_id: string; _user_id: string }
+        Returns: boolean
+      }
+    }
+    Enums: {
+      account_status: "pending" | "active" | "suspended"
+      app_role: "admin" | "moderator" | "student"
+      conversation_type: "direct" | "group"
+      member_role: "admin" | "member"
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+}
+
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never) = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never) = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never) = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never) = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never) = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {
+      account_status: ["pending", "active", "suspended"],
+      app_role: ["admin", "moderator", "student"],
+      conversation_type: ["direct", "group"],
+      member_role: ["admin", "member"],
+    },
+  },
+} as const
