@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "🔥"];
 
 export async function createGroup(name: string, memberIds: string[]) {
-  return supabase.rpc("create_group", { group_name: name, member_ids: memberIds });
+  return supabase.rpc("create_group", { group_title: name, member_ids: memberIds });
 }
 
 export async function toggleReaction(messageId: string, userId: string, reaction: string) {

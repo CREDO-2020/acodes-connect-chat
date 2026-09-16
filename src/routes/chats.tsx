@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 export const Route = createFileRoute("/chats")({ component: ChatsPage });
 
 type Profile = { id:string; full_name:string; username:string|null; avatar_url:string|null; class_name:string|null; bio:string|null; is_online:boolean; last_seen:string|null };
-type Conversation = { id:string; kind:string; title:string|null; created_by:string|null; created_at:string };
+type Conversation = { id:string; type:string; name:string|null; created_by:string|null; created_at:string };
 type Message = { id:string; conversation_id:string; sender_id:string; body:string; created_at:string; edited_at:string|null; deleted_at:string|null; reply_to_id:string|null };
 type Attachment = { id:string; message_id:string; uploader_id:string; storage_path:string; file_name:string; mime_type:string; file_size:number; created_at:string };
 type Reaction = { id:string; message_id:string; user_id:string; reaction:string; created_at:string };
@@ -72,8 +72,8 @@ function ChatsPage() {
   }
   async function openChat(other:Profile) {
     if(!user) return;
-    const {data,error}=await supabase.rpc("get_or_create_direct_conversation",{other_user:other.id});
-    if(error) return toast.error(error.message);
+    const {data,error}=await supabase.rpc("get_or_create_direct_conversation",{_other_user:other.id});
+    if(error) { toast.error(error.message); return; }
     await load(); await openChatById(data as string);
   }
   async function loadMessages(id:string) {
@@ -91,7 +91,7 @@ function ChatsPage() {
     if(!selected) return;
     void loadMessages(selected); void loadReactions(selected); void markRead(selected);
     const channel=supabase.channel(`acodes-chat-${selected}`)
-      .on("postgres_changes",{event:"*",schema:"public",table:"messages",filter:`conversation_id=eq.${selected}`},p=>{ if(p.eventType==="INSERT") setMessages(old=>old.some(x=>x.id===p.new.id)?old:[...old,p.new as Message]); else if(p.eventType==="UPDATE") setMessages(old=>old.map(x=>x.id===p.new.id?p.new as Message:x)); })
+      .on("postgres_changes",{event:"*",schema:"public",table:"messages",filter:`conversation_id=eq.${selected}`},p=>{ const row=p.new as Message; if(p.eventType==="INSERT") setMessages(old=>old.some(x=>x.id===row.id)?old:[...old,row]); else if(p.eventType==="UPDATE") setMessages(old=>old.map(x=>x.id===row.id?row:x)); })
       .on("postgres_changes",{event:"*",schema:"public",table:"message_reactions"},()=>void loadReactions(selected))
       .on("postgres_changes",{event:"*",schema:"public",table:"attachments"},()=>void loadMessages(selected))
       .on("postgres_changes",{event:"*",schema:"public",table:"typing_status",filter:`conversation_id=eq.${selected}`},async()=>{ const {data}=await supabase.from("typing_status").select("user_id,is_typing").eq("conversation_id",selected).eq("is_typing",true).neq("user_id",user?.id??""); setTypingNames((data??[]).map(x=>people.find(p=>p.id===x.user_id)?.full_name||"Someone")); })
@@ -127,7 +127,7 @@ function ChatsPage() {
   async function react(m:Message,r:string){if(!user||m.deleted_at)return; const existing=reactions.find(x=>x.message_id===m.id&&x.user_id===user.id&&x.reaction===r); if(existing) await supabase.from("message_reactions").delete().eq("id",existing.id); else await supabase.from("message_reactions").insert({message_id:m.id,user_id:user.id,reaction:r}); setShowEmoji(null); await loadReactions(m.conversation_id);}
   async function openAttachment(a:Attachment){const {data,error}=await supabase.storage.from("chat-media").createSignedUrl(a.storage_path,300); if(error)toast.error(error.message); else window.open(data.signedUrl,"_blank","noopener,noreferrer");}
 
-  async function createGroup(){if(!user||!groupName.trim()||groupMembers.length===0){toast.error("Enter a name and choose at least one classmate");return;} const {data,error}=await supabase.rpc("create_group",{group_title:groupName.trim(),member_ids:groupMembers}); if(error)return toast.error(error.message); setShowGroup(false);setGroupName("");setGroupMembers([]);await load();await openChatById(data as string);toast.success("Group created");}
+  async function createGroup(){if(!user||!groupName.trim()||groupMembers.length===0){toast.error("Enter a name and choose at least one classmate");return;} const {data,error}=await supabase.rpc("create_group",{group_title:groupName.trim(),member_ids:groupMembers}); if(error){toast.error(error.message);return;} setShowGroup(false);setGroupName("");setGroupMembers([]);await load();await openChatById(data as string);toast.success("Group created");}
   async function manageMember(id:string,action:"add"|"remove"){if(!selected)return;const {error}=await supabase.rpc("manage_group_member",{conversation_id_input:selected,target_user:id,action});if(error)toast.error(error.message);else{await load();toast.success(action==="add"?"Member added":"Member removed");}}
   async function leaveGroup(){if(!selected||!confirm("Leave this group?"))return;const {error}=await supabase.rpc("leave_group",{conversation_id_input:selected});if(error)toast.error(error.message);else{setSelected(null);await load();}}
   async function markNotificationRead(n:Notification){if(!n.read_at)await supabase.from("notifications").update({read_at:new Date().toISOString()}).eq("id",n.id); if(n.conversation_id){setShowNotifications(false);await openChatById(n.conversation_id);} }
