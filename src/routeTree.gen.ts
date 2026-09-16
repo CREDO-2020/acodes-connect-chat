@@ -14,7 +14,10 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as ChatsRouteImport } from './routes/chats'
 import { Route as ClassmatesRouteImport } from './routes/classmates'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as GroupsRouteImport } from './routes/groups'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
@@ -44,9 +47,24 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GroupsRoute = GroupsRouteImport.update({
+  id: '/groups',
+  path: '/groups',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -71,7 +89,10 @@ export interface FileRoutesByFullPath {
   '/chats': typeof ChatsRoute
   '/classmates': typeof ClassmatesRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/groups': typeof GroupsRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
+  '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
@@ -82,7 +103,10 @@ export interface FileRoutesByTo {
   '/chats': typeof ChatsRoute
   '/classmates': typeof ClassmatesRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/groups': typeof GroupsRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
+  '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
@@ -94,7 +118,10 @@ export interface FileRoutesById {
   '/chats': typeof ChatsRoute
   '/classmates': typeof ClassmatesRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/groups': typeof GroupsRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
+  '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
@@ -107,7 +134,10 @@ export interface FileRouteTypes {
     | '/chats'
     | '/classmates'
     | '/forgot-password'
+    | '/groups'
     | '/login'
+    | '/notifications'
+    | '/profile'
     | '/reset-password'
     | '/signup'
     | '/verify-email'
@@ -118,7 +148,10 @@ export interface FileRouteTypes {
     | '/chats'
     | '/classmates'
     | '/forgot-password'
+    | '/groups'
     | '/login'
+    | '/notifications'
+    | '/profile'
     | '/reset-password'
     | '/signup'
     | '/verify-email'
@@ -129,7 +162,10 @@ export interface FileRouteTypes {
     | '/chats'
     | '/classmates'
     | '/forgot-password'
+    | '/groups'
     | '/login'
+    | '/notifications'
+    | '/profile'
     | '/reset-password'
     | '/signup'
     | '/verify-email'
@@ -141,7 +177,10 @@ export interface RootRouteChildren {
   ChatsRoute: typeof ChatsRoute
   ClassmatesRoute: typeof ClassmatesRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  GroupsRoute: typeof GroupsRoute
   LoginRoute: typeof LoginRoute
+  NotificationsRoute: typeof NotificationsRoute
+  ProfileRoute: typeof ProfileRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
@@ -184,11 +223,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/groups': {
+      id: '/groups'
+      path: '/groups'
+      fullPath: '/groups'
+      preLoaderRoute: typeof GroupsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -221,7 +281,10 @@ const rootRouteChildren: RootRouteChildren = {
   ChatsRoute: ChatsRoute,
   ClassmatesRoute: ClassmatesRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  GroupsRoute: GroupsRoute,
   LoginRoute: LoginRoute,
+  NotificationsRoute: NotificationsRoute,
+  ProfileRoute: ProfileRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
   VerifyEmailRoute: VerifyEmailRoute,
