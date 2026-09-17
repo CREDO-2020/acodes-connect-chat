@@ -55,6 +55,50 @@ export type Database = {
           },
         ]
       }
+      calls: {
+        Row: {
+          answered_at: string | null
+          callee_id: string
+          caller_id: string
+          conversation_id: string | null
+          created_at: string
+          ended_at: string | null
+          id: string
+          mode: Database["public"]["Enums"]["call_mode"]
+          status: Database["public"]["Enums"]["call_status"]
+        }
+        Insert: {
+          answered_at?: string | null
+          callee_id: string
+          caller_id: string
+          conversation_id?: string | null
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          mode?: Database["public"]["Enums"]["call_mode"]
+          status?: Database["public"]["Enums"]["call_status"]
+        }
+        Update: {
+          answered_at?: string | null
+          callee_id?: string
+          caller_id?: string
+          conversation_id?: string | null
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          mode?: Database["public"]["Enums"]["call_mode"]
+          status?: Database["public"]["Enums"]["call_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calls_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversation_members: {
         Row: {
           conversation_id: string
@@ -434,6 +478,8 @@ export type Database = {
     Enums: {
       account_status: "pending" | "active" | "suspended"
       app_role: "admin" | "moderator" | "student"
+      call_mode: "voice" | "video"
+      call_status: "ringing" | "accepted" | "declined" | "missed" | "ended"
       conversation_type: "direct" | "group"
       member_role: "admin" | "member"
     }
@@ -565,6 +611,8 @@ export const Constants = {
     Enums: {
       account_status: ["pending", "active", "suspended"],
       app_role: ["admin", "moderator", "student"],
+      call_mode: ["voice", "video"],
+      call_status: ["ringing", "accepted", "declined", "missed", "ended"],
       conversation_type: ["direct", "group"],
       member_role: ["admin", "member"],
     },
