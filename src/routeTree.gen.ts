@@ -11,14 +11,20 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AnnouncementsRouteImport } from './routes/announcements'
+import { Route as CallsRouteImport } from './routes/calls'
 import { Route as ChatsRouteImport } from './routes/chats'
 import { Route as ClassmatesRouteImport } from './routes/classmates'
+import { Route as EventsRouteImport } from './routes/events'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as GroupsRouteImport } from './routes/groups'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as PollsRouteImport } from './routes/polls'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 
@@ -32,6 +38,21 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnnouncementsRoute = AnnouncementsRouteImport.update({
+  id: '/announcements',
+  path: '/announcements',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CallsRoute = CallsRouteImport.update({
+  id: '/calls',
+  path: '/calls',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChatsRoute = ChatsRouteImport.update({
   id: '/chats',
   path: '/chats',
@@ -40,6 +61,11 @@ const ChatsRoute = ChatsRouteImport.update({
 const ClassmatesRoute = ClassmatesRouteImport.update({
   id: '/classmates',
   path: '/classmates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
@@ -62,6 +88,11 @@ const NotificationsRoute = NotificationsRouteImport.update({
   path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PollsRoute = PollsRouteImport.update({
+  id: '/polls',
+  path: '/polls',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -70,6 +101,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResourcesRoute = ResourcesRouteImport.update({
+  id: '/resources',
+  path: '/resources',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -86,28 +122,40 @@ const VerifyEmailRoute = VerifyEmailRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/announcements': typeof AnnouncementsRoute
+  '/calls': typeof CallsRoute
   '/chats': typeof ChatsRoute
   '/classmates': typeof ClassmatesRoute
+  '/events': typeof EventsRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/groups': typeof GroupsRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
+  '/polls': typeof PollsRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/announcements': typeof AnnouncementsRoute
+  '/calls': typeof CallsRoute
   '/chats': typeof ChatsRoute
   '/classmates': typeof ClassmatesRoute
+  '/events': typeof EventsRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/groups': typeof GroupsRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
+  '/polls': typeof PollsRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
 }
@@ -115,14 +163,20 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/announcements': typeof AnnouncementsRoute
+  '/calls': typeof CallsRoute
   '/chats': typeof ChatsRoute
   '/classmates': typeof ClassmatesRoute
+  '/events': typeof EventsRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/groups': typeof GroupsRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
+  '/polls': typeof PollsRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/resources': typeof ResourcesRoute
   '/signup': typeof SignupRoute
   '/verify-email': typeof VerifyEmailRoute
 }
@@ -131,42 +185,60 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/admin'
+    | '/announcements'
+    | '/calls'
     | '/chats'
     | '/classmates'
+    | '/events'
     | '/forgot-password'
     | '/groups'
     | '/login'
     | '/notifications'
+    | '/polls'
     | '/profile'
     | '/reset-password'
+    | '/resources'
     | '/signup'
     | '/verify-email'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/admin'
+    | '/announcements'
+    | '/calls'
     | '/chats'
     | '/classmates'
+    | '/events'
     | '/forgot-password'
     | '/groups'
     | '/login'
     | '/notifications'
+    | '/polls'
     | '/profile'
     | '/reset-password'
+    | '/resources'
     | '/signup'
     | '/verify-email'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/admin'
+    | '/announcements'
+    | '/calls'
     | '/chats'
     | '/classmates'
+    | '/events'
     | '/forgot-password'
     | '/groups'
     | '/login'
     | '/notifications'
+    | '/polls'
     | '/profile'
     | '/reset-password'
+    | '/resources'
     | '/signup'
     | '/verify-email'
   fileRoutesById: FileRoutesById
@@ -174,14 +246,20 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRoute
+  AnnouncementsRoute: typeof AnnouncementsRoute
+  CallsRoute: typeof CallsRoute
   ChatsRoute: typeof ChatsRoute
   ClassmatesRoute: typeof ClassmatesRoute
+  EventsRoute: typeof EventsRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   GroupsRoute: typeof GroupsRoute
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
+  PollsRoute: typeof PollsRoute
   ProfileRoute: typeof ProfileRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ResourcesRoute: typeof ResourcesRoute
   SignupRoute: typeof SignupRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
 }
@@ -202,6 +280,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/announcements': {
+      id: '/announcements'
+      path: '/announcements'
+      fullPath: '/announcements'
+      preLoaderRoute: typeof AnnouncementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calls': {
+      id: '/calls'
+      path: '/calls'
+      fullPath: '/calls'
+      preLoaderRoute: typeof CallsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/chats': {
       id: '/chats'
       path: '/chats'
@@ -214,6 +313,13 @@ declare module '@tanstack/react-router' {
       path: '/classmates'
       fullPath: '/classmates'
       preLoaderRoute: typeof ClassmatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -244,6 +350,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/polls': {
+      id: '/polls'
+      path: '/polls'
+      fullPath: '/polls'
+      preLoaderRoute: typeof PollsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
@@ -256,6 +369,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resources': {
+      id: '/resources'
+      path: '/resources'
+      fullPath: '/resources'
+      preLoaderRoute: typeof ResourcesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -278,14 +398,20 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRoute,
+  AnnouncementsRoute: AnnouncementsRoute,
+  CallsRoute: CallsRoute,
   ChatsRoute: ChatsRoute,
   ClassmatesRoute: ClassmatesRoute,
+  EventsRoute: EventsRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   GroupsRoute: GroupsRoute,
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
+  PollsRoute: PollsRoute,
   ProfileRoute: ProfileRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ResourcesRoute: ResourcesRoute,
   SignupRoute: SignupRoute,
   VerifyEmailRoute: VerifyEmailRoute,
 }
