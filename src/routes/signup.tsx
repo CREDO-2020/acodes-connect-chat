@@ -88,9 +88,18 @@ function SignupPage() {
       return;
     }
     if (!data.session) {
-      void navigate({ to: "/verify-email", search: { email: parsed.data.email }, replace: true });
-      return;
+      // Email confirmation is off: sign the new account straight in.
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: parsed.data.email,
+        password: parsed.data.password,
+      });
+      if (signInError) {
+        toast.success("Account created — please log in.");
+        void navigate({ to: "/login", replace: true });
+        return;
+      }
     }
+    toast.success("Welcome to Acodes");
     void navigate({ to: "/chats", replace: true });
   }
 
